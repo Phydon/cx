@@ -63,6 +63,7 @@ fn main() {
         let mut content = String::new();
 
         if let Some(arg) = matches.get_one::<String>("arg") {
+            // get filepath
             let path = Path::new(&arg);
 
             if !path.exists() {
@@ -75,6 +76,7 @@ fn main() {
                 process::exit(0);
             }
 
+            // read content from file
             let file_content = fs::read_to_string(path).unwrap_or_else(|err| {
                 match err.kind() {
                     io::ErrorKind::InvalidData => {
@@ -110,7 +112,6 @@ fn main() {
         }
 
         let mut count = 0;
-
         if word_flag {
             content.split_whitespace().for_each(|_| {
                 count += 1;
@@ -128,7 +129,10 @@ fn main() {
         } else if bytes_flag {
             count = content.len();
         } else {
-            todo!("Count words as default");
+            // count words by default
+            content.split_whitespace().for_each(|_| {
+                count += 1;
+            });
         }
 
         println!("{}", count);
