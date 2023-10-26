@@ -110,6 +110,7 @@ fn main() {
         }
 
         let mut count = 0;
+
         if word_flag {
             content.split_whitespace().for_each(|_| {
                 count += 1;
@@ -119,7 +120,11 @@ fn main() {
                 count += 1;
             });
         } else if chars_flag {
-            todo!();
+            content.split_whitespace().for_each(|word| {
+                word.chars().for_each(|_| {
+                    count += 1;
+                })
+            });
         } else if bytes_flag {
             count = content.len();
         } else {
