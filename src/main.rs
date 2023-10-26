@@ -109,23 +109,24 @@ fn main() {
             content.push_str(&input);
         }
 
+        let mut count = 0;
         if word_flag {
-            todo!();
-            // let mut word_count = 0;
+            content.split_whitespace().for_each(|_| {
+                count += 1;
+            });
         } else if lines_flag {
-            let mut line_count = 0;
-            for _ in content.lines() {
-                line_count += 1;
-            }
-
-            println!("{}", line_count.blue());
+            content.lines().for_each(|_| {
+                count += 1;
+            });
         } else if chars_flag {
             todo!();
         } else if bytes_flag {
-            println!("{}", content.len().blue());
+            count = content.len();
         } else {
             todo!("Count words as default");
         }
+
+        println!("{}", count);
     }
 }
 
