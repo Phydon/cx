@@ -46,6 +46,7 @@ fn main() {
 
     // handle arguments
     let matches = countx().get_matches();
+    let bytes_flag = matches.get_flag("bytes");
     let chars_flag = matches.get_flag("chars");
     let lines_flag = matches.get_flag("lines");
     let word_flag = matches.get_flag("word");
@@ -110,6 +111,7 @@ fn main() {
 
         if word_flag {
             todo!();
+            // let mut word_count = 0;
         } else if lines_flag {
             let mut line_count = 0;
             for _ in content.lines() {
@@ -119,6 +121,8 @@ fn main() {
             println!("{}", line_count.blue());
         } else if chars_flag {
             todo!();
+        } else if bytes_flag {
+            println!("{}", content.len().blue());
         } else {
             todo!("Count words as default");
         }
@@ -149,6 +153,13 @@ fn countx() -> Command {
                 .action(ArgAction::Set)
                 .num_args(1)
                 .value_name("PATH"),
+        )
+        .arg(
+            Arg::new("bytes")
+                .short('b')
+                .long("bytes")
+                .help("Count all bytes")
+                .action(ArgAction::SetTrue),
         )
         .arg(
             Arg::new("chars")
