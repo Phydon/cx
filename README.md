@@ -10,8 +10,6 @@
 
 ## Examples
 
-=> TODO
-
 Count words, lines, chars, bytes in file 
 
 ![screenshot](https://github.com/Phydon/cx/blob/master/assets/cx_file.png)
@@ -35,11 +33,11 @@ Arguments:
   [PATH]  The filepath to work with
 
 Options:
-  -b, --bytes        Count all bytes
-  -c, --chars        Count all chars
-  -l, --lines        Count all lines
-  -S, --show-errors  Show errors (ignores errors by default)
-  -w, --word         Count all words
+  -b, --bytes        Count all bytes [aliases: byte]
+  -c, --chars        Count all chars [aliases: char]
+  -l, --lines        Count all lines [aliases: line]
+  -S, --show-errors  Show errors (ignores errors by default) [aliases: show-error]
+  -w, --words        Count all words [aliases: word]
   -h, --help         Print help (see more with '--help')
   -V, --version      Print version
 ```
@@ -61,17 +59,27 @@ Options:
   -b, --bytes
           Count all bytes
 
+          [aliases: byte]
+
   -c, --chars
           Count all chars
 
+          [aliases: char]
+
   -l, --lines
           Count all lines
-          
+
+          [aliases: line]
+
   -S, --show-errors
           Show errors (ignores errors by default)
 
-  -w, --word
+          [aliases: show-error]
+
+  -w, --words
           Count all words
+
+          [aliases: word]
 
   -h, --help
           Print help (see a summary with '-h')

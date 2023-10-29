@@ -50,7 +50,7 @@ fn main() {
     let chars_flag = matches.get_flag("chars");
     let lines_flag = matches.get_flag("lines");
     let show_errors_flag = matches.get_flag("show-errors");
-    let word_flag = matches.get_flag("word");
+    let word_flag = matches.get_flag("words");
 
     if let Some(_) = matches.subcommand_matches("log") {
         if let Ok(logs) = show_log_file(&config_dir) {
@@ -168,7 +168,7 @@ fn countx() -> Command {
             "Leann Phydon <leann.phydon@gmail.com>".italic().dimmed()
         ))
         // TODO update version
-        .version("1.1.0")
+        .version("1.1.1")
         .author("Leann Phydon <leann.phydon@gmail.com>")
         .arg(
             Arg::new("arg")
@@ -181,6 +181,7 @@ fn countx() -> Command {
             Arg::new("bytes")
                 .short('b')
                 .long("bytes")
+                .visible_alias("byte")
                 .help("Count all bytes")
                 .action(ArgAction::SetTrue),
         )
@@ -188,6 +189,7 @@ fn countx() -> Command {
             Arg::new("chars")
                 .short('c')
                 .long("chars")
+                .visible_alias("char")
                 .help("Count all chars")
                 .action(ArgAction::SetTrue),
         )
@@ -195,6 +197,7 @@ fn countx() -> Command {
             Arg::new("lines")
                 .short('l')
                 .long("lines")
+                .visible_alias("line")
                 .help("Count all lines")
                 .action(ArgAction::SetTrue),
         )
@@ -202,13 +205,15 @@ fn countx() -> Command {
             Arg::new("show-errors")
                 .short('S')
                 .long("show-errors")
+                .visible_alias("show-error")
                 .help("Show errors (ignores errors by default)")
                 .action(ArgAction::SetTrue),
         )
         .arg(
-            Arg::new("word")
+            Arg::new("words")
                 .short('w')
-                .long("word")
+                .long("words")
+                .visible_alias("word")
                 .help("Count all words")
                 .action(ArgAction::SetTrue),
         )
