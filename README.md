@@ -12,13 +12,13 @@
 
 => TODO
 
-Count words in file 
+Count words, lines, chars, bytes in file 
 
-![screenshot]()
+![screenshot](https://github.com/Phydon/cx/blob/master/assets/cx_file.png)
 
 Count words in pipe 
 
-![screenshot]()
+![screenshot](https://github.com/Phydon/cx/blob/master/assets/cx_pipe.png)
 
 ## Usage
 
@@ -35,12 +35,13 @@ Arguments:
   [PATH]  The filepath to work with
 
 Options:
-  -b, --bytes    Count all bytes
-  -c, --chars    Count all chars
-  -l, --lines    Count all lines
-  -w, --word     Count all words
-  -h, --help     Print help (see more with '--help')
-  -V, --version  Print version
+  -b, --bytes        Count all bytes
+  -c, --chars        Count all chars
+  -l, --lines        Count all lines
+  -S, --show-errors  Show errors (ignores errors by default)
+  -w, --word         Count all words
+  -h, --help         Print help (see more with '--help')
+  -V, --version      Print version
 ```
 
 ### Long Usage
@@ -65,6 +66,9 @@ Options:
 
   -l, --lines
           Count all lines
+          
+  -S, --show-errors
+          Show errors (ignores errors by default)
 
   -w, --word
           Count all words
