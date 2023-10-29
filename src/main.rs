@@ -49,6 +49,7 @@ fn main() {
     let bytes_flag = matches.get_flag("bytes");
     let chars_flag = matches.get_flag("chars");
     let lines_flag = matches.get_flag("lines");
+    let show_errors_flag = matches.get_flag("show-errors");
     let word_flag = matches.get_flag("word");
 
     if let Some(_) = matches.subcommand_matches("log") {
@@ -67,12 +68,16 @@ fn main() {
             let path = Path::new(&arg);
 
             if !path.exists() {
-                warn!("Path '{}' doesn`t exist", path.display());
+                if show_errors_flag {
+                    warn!("Path '{}' doesn`t exist", path.display());
+                }
                 process::exit(0);
             }
 
             if !path.is_file() {
-                warn!("Path '{}' is not a file", path.display());
+                if show_errors_flag {
+                    warn!("Path '{}' is not a file", path.display());
+                }
                 process::exit(0);
             }
 
@@ -80,24 +85,32 @@ fn main() {
             let file_content = fs::read_to_string(path).unwrap_or_else(|err| {
                 match err.kind() {
                     io::ErrorKind::InvalidData => {
-                        warn!("Path \'{}\' contains invalid data: {}", path.display(), err)
+                        if show_errors_flag {
+                            warn!("Path \'{}\' contains invalid data: {}", path.display(), err)
+                        }
                     }
                     io::ErrorKind::NotFound => {
-                        warn!("Path \'{}\' not found: {}", path.display(), err);
+                        if show_errors_flag {
+                            warn!("Path \'{}\' not found: {}", path.display(), err);
+                        }
                     }
                     io::ErrorKind::PermissionDenied => {
-                        warn!(
-                            "Missing permission to read path \'{}\': {}",
-                            path.display(),
-                            err
-                        )
+                        if show_errors_flag {
+                            warn!(
+                                "Missing permission to read path \'{}\': {}",
+                                path.display(),
+                                err
+                            )
+                        }
                     }
                     _ => {
-                        error!(
-                            "Failed to access path: \'{}\'\nUnexpected error occurred: {}",
-                            path.display(),
-                            err
-                        )
+                        if show_errors_flag {
+                            error!(
+                                "Failed to access path: \'{}\'\nUnexpected error occurred: {}",
+                                path.display(),
+                                err
+                            )
+                        }
                     }
                 }
                 process::exit(0);
@@ -155,7 +168,7 @@ fn countx() -> Command {
             "Leann Phydon <leann.phydon@gmail.com>".italic().dimmed()
         ))
         // TODO update version
-        .version("1.0.0")
+        .version("1.1.0")
         .author("Leann Phydon <leann.phydon@gmail.com>")
         .arg(
             Arg::new("arg")
@@ -183,6 +196,13 @@ fn countx() -> Command {
                 .short('l')
                 .long("lines")
                 .help("Count all lines")
+                .action(ArgAction::SetTrue),
+        )
+        .arg(
+            Arg::new("show-errors")
+                .short('S')
+                .long("show-errors")
+                .help("Show errors (ignores errors by default)")
                 .action(ArgAction::SetTrue),
         )
         .arg(
@@ -233,24 +253,20 @@ fn check_create_config_dir() -> io::Result<PathBuf> {
 
 fn show_log_file(config_dir: &PathBuf) -> io::Result<String> {
     let log_path = Path::new(&config_dir).join("cx.log");
-    match log_path.try_exists()? {
-        true => {
-            return Ok(format!(
-                "{} {}\n{}",
-                "Log location:".italic().dimmed(),
-                &log_path.display(),
-                fs::read_to_string(&log_path)?
-            ));
-        }
-        false => {
-            return Ok(format!(
-                "{} {}",
-                "No log file found:"
-                    .truecolor(250, 0, 104)
-                    .bold()
-                    .to_string(),
-                log_path.display()
-            ))
-        }
-    }
+    return match log_path.try_exists()? {
+        true => Ok(format!(
+            "{} {}\n{}",
+            "Log location:".italic().dimmed(),
+            &log_path.display(),
+            fs::read_to_string(&log_path)?
+        )),
+        false => Ok(format!(
+            "{} {}",
+            "No log file found:"
+                .truecolor(250, 0, 104)
+                .bold()
+                .to_string(),
+            log_path.display()
+        )),
+    };
 }
