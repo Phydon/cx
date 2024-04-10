@@ -2,6 +2,7 @@ use clap::{Arg, ArgAction, Command};
 use flexi_logger::{detailed_format, Duplicate, FileSpec, Logger};
 use log::{error, warn};
 use owo_colors::colored::*;
+use rayon::prelude::*;
 
 use std::{
     fs,
@@ -139,24 +140,17 @@ fn main() {
 }
 
 fn count_words(content: String) {
-    let mut count = 0;
-    content.split_whitespace().for_each(|_| {
-        count += 1;
-    });
-
+    let count = content.par_split_whitespace().count();
     println!("{}", count);
 }
 
 fn count_lines(content: String) {
-    let mut count = 0;
-    content.lines().for_each(|_| {
-        count += 1;
-    });
-
+    let count = content.par_lines().count();
     println!("{}", count);
 }
 
 fn count_chars(content: String) {
+    // TODO process in parallel
     let mut count = 0;
     content.split_whitespace().for_each(|word| {
         word.chars().for_each(|_| {
@@ -164,12 +158,19 @@ fn count_chars(content: String) {
         })
     });
 
-    println!("{}", count);
+    // FIXME
+    // let mut count = 0;
+    // content.par_split_whitespace().for_each(|word| {
+    //     word.par_chars().for_each(|_| {
+    //         count += 1;
+    //     })
+    // });
+
+    println!("{:?}", count);
 }
 
 fn count_bytes(content: String) {
-    let count = content.len();
-
+    let count = content.par_bytes().count();
     println!("{}", count);
 }
 
@@ -189,7 +190,7 @@ fn countx() -> Command {
             "Leann Phydon <leann.phydon@gmail.com>".italic().dimmed()
         ))
         // TODO update version
-        .version("1.1.2")
+        .version("1.2.0")
         .author("Leann Phydon <leann.phydon@gmail.com>")
         .arg(
             Arg::new("arg")
