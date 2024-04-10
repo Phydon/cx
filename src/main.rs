@@ -120,36 +120,57 @@ fn main() {
         } else {
             // read input from pipe
             let input = read_pipe();
-
             content.push_str(&input);
         }
 
-        let mut count = 0;
         if word_flag {
-            content.split_whitespace().for_each(|_| {
-                count += 1;
-            });
+            count_words(content);
         } else if lines_flag {
-            content.lines().for_each(|_| {
-                count += 1;
-            });
+            count_lines(content);
         } else if chars_flag {
-            content.split_whitespace().for_each(|word| {
-                word.chars().for_each(|_| {
-                    count += 1;
-                })
-            });
+            count_chars(content);
         } else if bytes_flag {
-            count = content.len();
+            count_bytes(content);
         } else {
             // count words by default
-            content.split_whitespace().for_each(|_| {
-                count += 1;
-            });
+            count_words(content);
         }
-
-        println!("{}", count);
     }
+}
+
+fn count_words(content: String) {
+    let mut count = 0;
+    content.split_whitespace().for_each(|_| {
+        count += 1;
+    });
+
+    println!("{}", count);
+}
+
+fn count_lines(content: String) {
+    let mut count = 0;
+    content.lines().for_each(|_| {
+        count += 1;
+    });
+
+    println!("{}", count);
+}
+
+fn count_chars(content: String) {
+    let mut count = 0;
+    content.split_whitespace().for_each(|word| {
+        word.chars().for_each(|_| {
+            count += 1;
+        })
+    });
+
+    println!("{}", count);
+}
+
+fn count_bytes(content: String) {
+    let count = content.len();
+
+    println!("{}", count);
 }
 
 // build cli
@@ -168,7 +189,7 @@ fn countx() -> Command {
             "Leann Phydon <leann.phydon@gmail.com>".italic().dimmed()
         ))
         // TODO update version
-        .version("1.1.1")
+        .version("1.1.2")
         .author("Leann Phydon <leann.phydon@gmail.com>")
         .arg(
             Arg::new("arg")
