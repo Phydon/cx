@@ -124,32 +124,33 @@ fn main() {
             content.push_str(&input);
         }
 
+        let mut count = 0;
         if word_flag {
-            count_words(content);
+            count += count_words(content);
         } else if lines_flag {
-            count_lines(content);
+            count += count_lines(content);
         } else if chars_flag {
-            count_chars(content);
+            count += count_chars(content);
         } else if bytes_flag {
-            count_bytes(content);
+            count += count_bytes(content);
         } else {
             // count words by default
-            count_words(content);
+            count += count_words(content);
         }
+
+        println!("{}", count);
     }
 }
 
-fn count_words(content: String) {
-    let count = content.par_split_whitespace().count();
-    println!("{}", count);
+fn count_words(content: String) -> usize {
+    content.par_split_whitespace().count()
 }
 
-fn count_lines(content: String) {
-    let count = content.par_lines().count();
-    println!("{}", count);
+fn count_lines(content: String) -> usize {
+    content.par_lines().count()
 }
 
-fn count_chars(content: String) {
+fn count_chars(content: String) -> usize {
     // TODO process in parallel
     let mut count = 0;
     content.split_whitespace().for_each(|word| {
@@ -158,6 +159,8 @@ fn count_chars(content: String) {
         })
     });
 
+    count as usize
+
     // FIXME
     // let mut count = 0;
     // content.par_split_whitespace().for_each(|word| {
@@ -165,13 +168,10 @@ fn count_chars(content: String) {
     //         count += 1;
     //     })
     // });
-
-    println!("{:?}", count);
 }
 
-fn count_bytes(content: String) {
-    let count = content.par_bytes().count();
-    println!("{}", count);
+fn count_bytes(content: String) -> usize {
+    content.par_bytes().count()
 }
 
 // build cli
@@ -296,4 +296,73 @@ fn show_log_file(config_dir: &PathBuf) -> io::Result<String> {
             log_path.display()
         )),
     };
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn count_words_test() {
+        let input = "This is a test".to_string();
+        let result = count_words(input);
+        let expected = 4;
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn count_lines_test() {
+        let input = "This\nis\na\ntest".to_string();
+        let result = count_lines(input);
+        let expected = 4;
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn count_chars_test() {
+        let input = "This is a test".to_string();
+        let result = count_chars(input);
+        let expected = 11;
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn count_bytes_test() {
+        let input = "This is a test".to_string();
+        let result = count_bytes(input);
+        let expected = 14;
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn count_words_empty_test() {
+        let input = "".to_string();
+        let result = count_words(input);
+        let expected = 0;
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn count_lines_empty_test() {
+        let input = "".to_string();
+        let result = count_lines(input);
+        let expected = 0;
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn count_chars_empty_test() {
+        let input = "".to_string();
+        let result = count_chars(input);
+        let expected = 0;
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn count_bytes_empty_test() {
+        let input = "".to_string();
+        let result = count_bytes(input);
+        let expected = 0;
+        assert_eq!(result, expected);
+    }
 }
