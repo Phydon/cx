@@ -14,13 +14,7 @@ use std::{
 fn main() {
     // handle Ctrl+C
     ctrlc::set_handler(move || {
-        println!(
-            "{} {} {} {}",
-            "Received Ctrl-C!".bold().red(),
-            "🤬",
-            "Exit program!".bold().red(),
-            "☠",
-        );
+        println!("{}", "Received Ctrl-C!".italic(),);
         process::exit(0)
     })
     .expect("Error setting Ctrl-C handler");
@@ -161,7 +155,7 @@ fn count_chars(content: String) -> usize {
 
     count as usize
 
-    // FIXME
+    // TODO FIXME
     // let mut count = 0;
     // content.par_split_whitespace().for_each(|word| {
     //     word.par_chars().for_each(|_| {
@@ -190,7 +184,7 @@ fn countx() -> Command {
             "Leann Phydon <leann.phydon@gmail.com>".italic().dimmed()
         ))
         // TODO update version
-        .version("1.2.0")
+        .version("1.2.1")
         .author("Leann Phydon <leann.phydon@gmail.com>")
         .arg(
             Arg::new("arg")
