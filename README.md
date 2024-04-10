@@ -1,3 +1,5 @@
+[![Tests](https://github.com/Phydon/cx/actions/workflows/rust.yml/badge.svg)](https://github.com/Phydon/cx/actions/workflows/rust.yml)
+
 # 🧮 📄 cx
 
 **C**ount **X**
