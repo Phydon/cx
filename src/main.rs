@@ -55,6 +55,8 @@ fn main() {
             error!("Unable to read logs");
             process::exit(1);
         }
+    } else if let Some(_) = matches.subcommand_matches("examples") {
+        examples();
     } else {
         let mut content = String::new();
 
@@ -113,8 +115,8 @@ fn main() {
 
             content.push_str(&file_content);
         } else {
-            // read input from pipe
-            let input = read_pipe();
+            // read input from stdin
+            let input = read_stdin();
             content.push_str(&input);
         }
 
@@ -168,6 +170,19 @@ fn count_bytes(content: String) -> usize {
     content.par_bytes().count()
 }
 
+fn read_stdin() -> String {
+    let mut input = io::stdin()
+        .lock()
+        .lines()
+        .fold("".to_string(), |acc, line| acc + &line.unwrap() + "\n");
+
+    // TODO possible error here?
+    // TODO if last char is '\n' it will get removed
+    let _ = input.pop();
+
+    input.trim().to_string()
+}
+
 // build cli
 fn countx() -> Command {
     Command::new("cx")
@@ -184,7 +199,7 @@ fn countx() -> Command {
             "Leann Phydon <leann.phydon@gmail.com>".italic().dimmed()
         ))
         // TODO update version
-        .version("1.2.1")
+        .version("1.2.2")
         .author("Leann Phydon <leann.phydon@gmail.com>")
         .arg(
             Arg::new("arg")
@@ -234,6 +249,11 @@ fn countx() -> Command {
                 .action(ArgAction::SetTrue),
         )
         .subcommand(
+            Command::new("examples")
+                .long_flag("examples")
+                .about("Show examples"),
+        )
+        .subcommand(
             Command::new("log")
                 .short_flag('L')
                 .long_flag("log")
@@ -241,17 +261,34 @@ fn countx() -> Command {
         )
 }
 
-fn read_pipe() -> String {
-    let mut input = io::stdin()
-        .lock()
-        .lines()
-        .fold("".to_string(), |acc, line| acc + &line.unwrap() + "\n");
+fn examples() {
+    println!("\n{}\n----------", "Example 1".bold());
+    println!(
+        r###"
+$ cat example.txt
+lorem ipsum wasd
 
-    // TODO possible error here?
-    // TODO if last char is '\n' it will get removed
-    let _ = input.pop();
+$ cx example.txt --words
+3
 
-    input.trim().to_string()
+$cx example.txt --lines
+1
+
+$ cx example.txt --chars
+14
+
+$ cx example.txt --bytes
+19
+    "###
+    );
+
+    println!("\n{}\n----------", "Example 2".bold());
+    println!(
+        r###"
+$ echo 'Some pipe input' | cx
+3
+    "###
+    );
 }
 
 fn check_create_config_dir() -> io::Result<PathBuf> {
