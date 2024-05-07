@@ -1,3 +1,4 @@
+// TODO use BigInt crate??
 use clap::{Arg, ArgAction, Command};
 use flexi_logger::{detailed_format, Duplicate, FileSpec, Logger};
 use log::{error, warn};
@@ -121,7 +122,7 @@ fn main() {
             content.push_str(&input);
         }
 
-        let mut count = 0;
+        let mut count: i128 = 0;
         if word_flag {
             count += count_words(content);
         } else if lines_flag {
@@ -141,15 +142,15 @@ fn main() {
     }
 }
 
-fn count_words(content: String) -> usize {
-    content.par_split_whitespace().count()
+fn count_words(content: String) -> i128 {
+    content.par_split_whitespace().count() as i128
 }
 
-fn count_lines(content: String) -> usize {
-    content.par_lines().count()
+fn count_lines(content: String) -> i128 {
+    content.par_lines().count() as i128
 }
 
-fn count_chars(content: String) -> usize {
+fn count_chars(content: String) -> i128 {
     // TODO process in parallel
     let mut count = 0;
     content.split_whitespace().for_each(|word| {
@@ -158,7 +159,7 @@ fn count_chars(content: String) -> usize {
         })
     });
 
-    count as usize
+    count
 
     // TODO FIXME
     // let mut count = 0;
@@ -169,14 +170,14 @@ fn count_chars(content: String) -> usize {
     // });
 }
 
-fn count_bytes(content: String) -> usize {
-    content.par_bytes().count()
+fn count_bytes(content: String) -> i128 {
+    content.par_bytes().count() as i128
 }
 
-fn sum(content: String) -> usize {
+fn sum(content: String) -> i128 {
     content
         .par_split_whitespace()
-        .filter_map(|x| match x.parse::<usize>() {
+        .filter_map(|x| match x.parse::<i128>() {
             Ok(n) => Some(n),
             _ => None,
         })
