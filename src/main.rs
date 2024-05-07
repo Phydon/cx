@@ -45,6 +45,7 @@ fn main() {
     let chars_flag = matches.get_flag("chars");
     let lines_flag = matches.get_flag("lines");
     let show_errors_flag = matches.get_flag("show-errors");
+    let sum_flag = matches.get_flag("sum");
     let word_flag = matches.get_flag("words");
 
     if let Some(_) = matches.subcommand_matches("log") {
@@ -129,6 +130,8 @@ fn main() {
             count += count_chars(content);
         } else if bytes_flag {
             count += count_bytes(content);
+        } else if sum_flag {
+            count += sum(content);
         } else {
             // count words by default
             count += count_words(content);
@@ -170,6 +173,16 @@ fn count_bytes(content: String) -> usize {
     content.par_bytes().count()
 }
 
+fn sum(content: String) -> usize {
+    content
+        .par_split_whitespace()
+        .filter_map(|x| match x.parse::<usize>() {
+            Ok(n) => Some(n),
+            _ => None,
+        })
+        .sum()
+}
+
 fn read_stdin() -> String {
     let mut input = io::stdin()
         .lock()
@@ -199,11 +212,15 @@ fn countx() -> Command {
             "Leann Phydon <leann.phydon@gmail.com>".italic().dimmed()
         ))
         // TODO update version
-        .version("1.2.2")
+        .version("1.2.3")
         .author("Leann Phydon <leann.phydon@gmail.com>")
         .arg(
             Arg::new("arg")
                 .help("The filepath to work with")
+                .long_help(format!(
+                    "{}\n{}",
+                    "The filepath to work with", "Reads stdin if left empty"
+                ))
                 .action(ArgAction::Set)
                 .num_args(1)
                 .value_name("PATH"),
@@ -238,6 +255,13 @@ fn countx() -> Command {
                 .long("show-errors")
                 .visible_alias("show-error")
                 .help("Show errors (ignores errors by default)")
+                .action(ArgAction::SetTrue),
+        )
+        .arg(
+            Arg::new("sum")
+                .short('s')
+                .long("sum")
+                .help("Sum up all integers")
                 .action(ArgAction::SetTrue),
         )
         .arg(
@@ -287,6 +311,14 @@ $ cx example.txt --bytes
         r###"
 $ echo 'Some pipe input' | cx
 3
+    "###
+    );
+
+    println!("\n{}\n----------", "Example 3".bold());
+    println!(
+        r###"
+$ echo 'This 42 is 1337 a t35t 666' | cx --sum
+2045
     "###
     );
 }
@@ -366,6 +398,14 @@ mod tests {
     }
 
     #[test]
+    fn sum_test() {
+        let input = "This 42 is 1337 a t35t 666".to_string();
+        let result = sum(input);
+        let expected = 2045;
+        assert_eq!(result, expected);
+    }
+
+    #[test]
     fn count_words_empty_test() {
         let input = "".to_string();
         let result = count_words(input);
@@ -393,6 +433,14 @@ mod tests {
     fn count_bytes_empty_test() {
         let input = "".to_string();
         let result = count_bytes(input);
+        let expected = 0;
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn sum_empty_test() {
+        let input = "".to_string();
+        let result = sum(input);
         let expected = 0;
         assert_eq!(result, expected);
     }
