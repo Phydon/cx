@@ -45,7 +45,6 @@ fn main() {
     let chars_flag = matches.get_flag("chars");
     let lines_flag = matches.get_flag("lines");
     let show_errors_flag = matches.get_flag("show-errors");
-    let sum_flag = matches.get_flag("sum");
     let word_flag = matches.get_flag("words");
 
     if let Some(_) = matches.subcommand_matches("log") {
@@ -130,8 +129,6 @@ fn main() {
             count += count_chars(content);
         } else if bytes_flag {
             count += count_bytes(content);
-        } else if sum_flag {
-            count += sum(content);
         } else {
             // count words by default
             count += count_words(content);
@@ -171,21 +168,6 @@ fn count_chars(content: String) -> u64 {
 
 fn count_bytes(content: String) -> u64 {
     content.par_bytes().count() as u64
-}
-
-fn sum(content: String) -> u64 {
-    // FIXME wrong result with hugh numbers
-    // TODO use BigInt crate??
-    // workaround TODO -> remove later
-    assert!((content.len() as u64) < (u32::MAX as u64));
-
-    content
-        .par_split_whitespace()
-        .filter_map(|x| match x.parse::<u64>() {
-            Ok(n) => Some(n),
-            _ => None,
-        })
-        .sum()
 }
 
 fn read_stdin() -> String {
@@ -260,13 +242,6 @@ fn countx() -> Command {
                 .long("show-errors")
                 .visible_alias("show-error")
                 .help("Show errors (ignores errors by default)")
-                .action(ArgAction::SetTrue),
-        )
-        .arg(
-            Arg::new("sum")
-                .short('s')
-                .long("sum")
-                .help("Sum up all positive integers")
                 .action(ArgAction::SetTrue),
         )
         .arg(
@@ -403,14 +378,6 @@ mod tests {
     }
 
     #[test]
-    fn sum_test() {
-        let input = "This 42 is 1337 a t35t 666".to_string();
-        let result = sum(input);
-        let expected = 2045;
-        assert_eq!(result, expected);
-    }
-
-    #[test]
     fn count_words_empty_test() {
         let input = "".to_string();
         let result = count_words(input);
@@ -438,14 +405,6 @@ mod tests {
     fn count_bytes_empty_test() {
         let input = "".to_string();
         let result = count_bytes(input);
-        let expected = 0;
-        assert_eq!(result, expected);
-    }
-
-    #[test]
-    fn sum_empty_test() {
-        let input = "".to_string();
-        let result = sum(input);
         let expected = 0;
         assert_eq!(result, expected);
     }
