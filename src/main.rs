@@ -1,4 +1,3 @@
-// TODO use BigInt crate??
 use clap::{Arg, ArgAction, Command};
 use flexi_logger::{detailed_format, Duplicate, FileSpec, Logger};
 use log::{error, warn};
@@ -122,7 +121,7 @@ fn main() {
             content.push_str(&input);
         }
 
-        let mut count: i128 = 0;
+        let mut count: u64 = 0;
         if word_flag {
             count += count_words(content);
         } else if lines_flag {
@@ -142,15 +141,15 @@ fn main() {
     }
 }
 
-fn count_words(content: String) -> i128 {
-    content.par_split_whitespace().count() as i128
+fn count_words(content: String) -> u64 {
+    content.par_split_whitespace().count() as u64
 }
 
-fn count_lines(content: String) -> i128 {
-    content.par_lines().count() as i128
+fn count_lines(content: String) -> u64 {
+    content.par_lines().count() as u64
 }
 
-fn count_chars(content: String) -> i128 {
+fn count_chars(content: String) -> u64 {
     // TODO process in parallel
     let mut count = 0;
     content.split_whitespace().for_each(|word| {
@@ -170,14 +169,19 @@ fn count_chars(content: String) -> i128 {
     // });
 }
 
-fn count_bytes(content: String) -> i128 {
-    content.par_bytes().count() as i128
+fn count_bytes(content: String) -> u64 {
+    content.par_bytes().count() as u64
 }
 
-fn sum(content: String) -> i128 {
+fn sum(content: String) -> u64 {
+    // FIXME wrong result with hugh numbers
+    // TODO use BigInt crate??
+    // workaround TODO -> remove later
+    assert!((content.len() as u64) < (u32::MAX as u64));
+
     content
         .par_split_whitespace()
-        .filter_map(|x| match x.parse::<i128>() {
+        .filter_map(|x| match x.parse::<u64>() {
             Ok(n) => Some(n),
             _ => None,
         })
@@ -262,7 +266,7 @@ fn countx() -> Command {
             Arg::new("sum")
                 .short('s')
                 .long("sum")
-                .help("Sum up all integers")
+                .help("Sum up all positive integers")
                 .action(ArgAction::SetTrue),
         )
         .arg(
