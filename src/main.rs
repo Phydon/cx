@@ -199,7 +199,7 @@ fn countx() -> Command {
             "Leann Phydon <leann.phydon@gmail.com>".italic().dimmed()
         ))
         // TODO update version
-        .version("1.2.3")
+        .version("1.2.2")
         .author("Leann Phydon <leann.phydon@gmail.com>")
         .arg(
             Arg::new("arg")
