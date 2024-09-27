@@ -120,7 +120,18 @@ fn main() {
             content.push_str(&input);
         }
 
-        let mut count: u64 = 0;
+        // INFO use usize over u64 (applies to code block & functions below)
+
+        // usize is pointer-sized, thus its actual size depends on the architecture you are compiling your program for.
+        // As an example, on a 32 bit x86 computer, usize = u32, while on x86_64 computers, usize = u64.
+        // usize gives you the guarantee to be always big enough to hold any pointer or any offset in a data structure,
+        // while u32 can be too small on some architectures
+
+        // WARNING This answer is legacy for Rust, usize have been redefined as "can hold any memory location" ->
+        // TL;DR: a pointer is not just a number
+        // https://stackoverflow.com/questions/29592256/whats-the-difference-between-usize-and-u32
+
+        let mut count = 0;
         if word_flag {
             count += count_words(content);
         } else if lines_flag {
@@ -138,15 +149,15 @@ fn main() {
     }
 }
 
-fn count_words(content: String) -> u64 {
+fn count_words(content: String) -> usize {
     content.par_split_whitespace().count() as u64
 }
 
-fn count_lines(content: String) -> u64 {
-    content.par_lines().count() as u64
+fn count_lines(content: String) -> usize {
+    content.par_lines().count()
 }
 
-fn count_chars(content: String) -> u64 {
+fn count_chars(content: String) -> usize {
     // TODO process in parallel
     let mut count = 0;
     content.split_whitespace().for_each(|word| {
@@ -155,7 +166,7 @@ fn count_chars(content: String) -> u64 {
         })
     });
 
-    count
+    count as usize
 
     // TODO FIXME
     // let mut count = 0;
@@ -166,8 +177,8 @@ fn count_chars(content: String) -> u64 {
     // });
 }
 
-fn count_bytes(content: String) -> u64 {
-    content.par_bytes().count() as u64
+fn count_bytes(content: String) -> usize {
+    content.par_bytes().count()
 }
 
 fn read_stdin() -> String {
