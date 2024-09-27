@@ -199,7 +199,7 @@ fn countx() -> Command {
             "Leann Phydon <leann.phydon@gmail.com>".italic().dimmed()
         ))
         // TODO update version
-        .version("1.2.2")
+        .version("1.2.3")
         .author("Leann Phydon <leann.phydon@gmail.com>")
         .arg(
             Arg::new("arg")
@@ -275,7 +275,7 @@ lorem ipsum wasd
 $ cx example.txt --words
 3
 
-$cx example.txt --lines
+$ cx example.txt --lines
 1
 
 $ cx example.txt --chars
