@@ -150,7 +150,7 @@ fn main() {
 }
 
 fn count_words(content: String) -> usize {
-    content.par_split_whitespace().count() as u64
+    content.par_split_whitespace().count()
 }
 
 fn count_lines(content: String) -> usize {
