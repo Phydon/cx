@@ -39,7 +39,7 @@ Options:
   -c, --chars        Count all chars [aliases: char]
   -l, --lines        Count all lines [aliases: line]
   -S, --show-errors  Show errors (ignores errors by default) [aliases: show-error]
-  -w, --words        Count all words [aliases: word]
+  -w, --words        Count all words [default] [aliases: word]
   -h, --help         Print help (see more with '--help')
   -V, --version      Print version
 ```
@@ -79,7 +79,7 @@ Options:
           [aliases: show-error]
 
   -w, --words
-          Count all words
+          Count all words [default]
 
           [aliases: word]
 
