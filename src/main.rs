@@ -210,7 +210,7 @@ fn countx() -> Command {
             "Leann Phydon <leann.phydon@gmail.com>".italic().dimmed()
         ))
         // TODO update version
-        .version("1.2.3")
+        .version("1.2.4")
         .author("Leann Phydon <leann.phydon@gmail.com>")
         .arg(
             Arg::new("arg")
@@ -260,7 +260,7 @@ fn countx() -> Command {
                 .short('w')
                 .long("words")
                 .visible_alias("word")
-                .help("Count all words")
+                .help("Count all words [default]")
                 .action(ArgAction::SetTrue),
         )
         .subcommand(
