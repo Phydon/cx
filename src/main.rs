@@ -228,7 +228,8 @@ fn countx() -> Command {
             "Leann Phydon <leann.phydon@gmail.com>".italic().dimmed()
         ))
         .long_about(format!(
-            "{}\n{}",
+            "{}\n{}\n{}",
+            "Count X",
             "Count lines, words, chars, bytes.",
             "Read content from stdin or filepaths as argument.",
         ))
