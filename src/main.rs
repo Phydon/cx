@@ -198,6 +198,7 @@ fn count_bytes(content: &str) -> usize {
     content.par_bytes().count()
 }
 
+// FIXME incorrect counting of bytes when content is read via stdin (works when reading from file)
 fn read_stdin() -> String {
     let mut input = io::stdin()
         .lock()
@@ -206,7 +207,7 @@ fn read_stdin() -> String {
 
     // TODO possible error here?
     // TODO if last char is '\n' it will get removed
-    // FIXME this is an error when counting bytes
+    // INFO this has nothing to do with the incorrect counting of bytes (most likely not)
     let _ = input.pop();
 
     input.trim().to_string()
