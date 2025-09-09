@@ -227,6 +227,11 @@ fn countx() -> Command {
             "CX".bold().truecolor(250, 0, 104),
             "Leann Phydon <leann.phydon@gmail.com>".italic().dimmed()
         ))
+        .long_about(format!(
+            "{}\n{}",
+            "Count lines, words, chars, bytes.",
+            "Read content from stdin or filepaths as argument.",
+        ))
         // TODO update version
         .version("1.3.0")
         .author("Leann Phydon <leann.phydon@gmail.com>")
@@ -278,7 +283,7 @@ fn countx() -> Command {
                 .short('w')
                 .long("words")
                 .visible_alias("word")
-                .help("Count all words [default]")
+                .help("Count all words")
                 .action(ArgAction::SetTrue),
         )
         .subcommand(
@@ -301,11 +306,14 @@ fn examples() {
 $ cat example.txt
 lorem ipsum wasd
 
-$ cx example.txt --words
-3
+$ cx example.txt
+1 3 14 19 example.txt
 
 $ cx example.txt --lines
 1
+
+$ cx example.txt --words
+3
 
 $ cx example.txt --chars
 14
@@ -319,15 +327,7 @@ $ cx example.txt --bytes
     println!(
         r###"
 $ echo 'Some pipe input' | cx
-3
-    "###
-    );
-
-    println!("\n{}\n----------", "Example 3".bold());
-    println!(
-        r###"
-$ echo 'This 42 is 1337 a t35t 666' | cx --sum
-2045
+1 3 13 17
     "###
     );
 }
