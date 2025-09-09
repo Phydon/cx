@@ -1,3 +1,4 @@
+// TODO handle multiple files
 use clap::{Arg, ArgAction, Command};
 use flexi_logger::{detailed_format, Duplicate, FileSpec, Logger};
 use log::{error, warn};
@@ -59,6 +60,7 @@ fn main() {
         examples();
     } else {
         let mut content = String::new();
+        let mut filepath = PathBuf::new();
 
         if let Some(arg) = matches.get_one::<String>("arg") {
             // get filepath
@@ -114,6 +116,7 @@ fn main() {
             });
 
             content.push_str(&file_content);
+            filepath.push(path);
         } else {
             // read input from stdin
             let input = read_stdin();
@@ -131,33 +134,47 @@ fn main() {
         // TL;DR: a pointer is not just a number
         // https://stackoverflow.com/questions/29592256/whats-the-difference-between-usize-and-u32
 
-        let mut count = 0;
-        if word_flag {
-            count += count_words(content);
-        } else if lines_flag {
-            count += count_lines(content);
-        } else if chars_flag {
-            count += count_chars(content);
-        } else if bytes_flag {
-            count += count_bytes(content);
-        } else {
-            // count words by default
-            count += count_words(content);
-        }
+        let lines: usize = count_lines(&content);
+        let words: usize = count_words(&content);
+        let bytes: usize = count_bytes(&content);
+        let chars: usize = count_chars(&content);
 
-        println!("{}", count);
+        if word_flag {
+            println!("{}", words);
+        } else if lines_flag {
+            println!("{}", lines);
+        } else if chars_flag {
+            println!("{}", chars);
+        } else if bytes_flag {
+            println!("{}", bytes);
+        } else {
+            let out = if filepath.as_path().exists() {
+                format!(
+                    "{} {} {} {} {}",
+                    lines,
+                    words,
+                    chars,
+                    bytes,
+                    filepath.as_path().display()
+                )
+            } else {
+                format!("{} {} {} {}", lines, words, chars, bytes)
+            };
+
+            println!("{}", out);
+        }
     }
 }
 
-fn count_words(content: String) -> usize {
+fn count_words(content: &str) -> usize {
     content.par_split_whitespace().count()
 }
 
-fn count_lines(content: String) -> usize {
+fn count_lines(content: &str) -> usize {
     content.par_lines().count()
 }
 
-fn count_chars(content: String) -> usize {
+fn count_chars(content: &str) -> usize {
     // TODO process in parallel
     let mut count = 0;
     content.split_whitespace().for_each(|word| {
@@ -177,7 +194,7 @@ fn count_chars(content: String) -> usize {
     // });
 }
 
-fn count_bytes(content: String) -> usize {
+fn count_bytes(content: &str) -> usize {
     content.par_bytes().count()
 }
 
@@ -189,6 +206,7 @@ fn read_stdin() -> String {
 
     // TODO possible error here?
     // TODO if last char is '\n' it will get removed
+    // FIXME this is an error when counting bytes
     let _ = input.pop();
 
     input.trim().to_string()
@@ -210,7 +228,7 @@ fn countx() -> Command {
             "Leann Phydon <leann.phydon@gmail.com>".italic().dimmed()
         ))
         // TODO update version
-        .version("1.2.4")
+        .version("1.3.0")
         .author("Leann Phydon <leann.phydon@gmail.com>")
         .arg(
             Arg::new("arg")
@@ -359,7 +377,7 @@ mod tests {
     #[test]
     fn count_words_test() {
         let input = "This is a test".to_string();
-        let result = count_words(input);
+        let result = count_words(&input);
         let expected = 4;
         assert_eq!(result, expected);
     }
@@ -367,7 +385,7 @@ mod tests {
     #[test]
     fn count_lines_test() {
         let input = "This\nis\na\ntest".to_string();
-        let result = count_lines(input);
+        let result = count_lines(&input);
         let expected = 4;
         assert_eq!(result, expected);
     }
@@ -375,7 +393,7 @@ mod tests {
     #[test]
     fn count_chars_test() {
         let input = "This is a test".to_string();
-        let result = count_chars(input);
+        let result = count_chars(&input);
         let expected = 11;
         assert_eq!(result, expected);
     }
@@ -383,7 +401,7 @@ mod tests {
     #[test]
     fn count_bytes_test() {
         let input = "This is a test".to_string();
-        let result = count_bytes(input);
+        let result = count_bytes(&input);
         let expected = 14;
         assert_eq!(result, expected);
     }
@@ -391,7 +409,7 @@ mod tests {
     #[test]
     fn count_words_empty_test() {
         let input = "".to_string();
-        let result = count_words(input);
+        let result = count_words(&input);
         let expected = 0;
         assert_eq!(result, expected);
     }
@@ -399,7 +417,7 @@ mod tests {
     #[test]
     fn count_lines_empty_test() {
         let input = "".to_string();
-        let result = count_lines(input);
+        let result = count_lines(&input);
         let expected = 0;
         assert_eq!(result, expected);
     }
@@ -407,7 +425,7 @@ mod tests {
     #[test]
     fn count_chars_empty_test() {
         let input = "".to_string();
-        let result = count_chars(input);
+        let result = count_chars(&input);
         let expected = 0;
         assert_eq!(result, expected);
     }
@@ -415,7 +433,7 @@ mod tests {
     #[test]
     fn count_bytes_empty_test() {
         let input = "".to_string();
-        let result = count_bytes(input);
+        let result = count_bytes(&input);
         let expected = 0;
         assert_eq!(result, expected);
     }
