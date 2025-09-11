@@ -203,6 +203,9 @@ fn read_stdin() -> String {
     let mut input = io::stdin()
         .lock()
         .lines()
+        // Returns an iterator over the lines of this reader.
+        // The iterator returned from this function will yield instances of io::Result<String>. Each string returned will not have a newline byte (the 0xA byte) or CRLF (0xD, 0xA bytes) at the end.
+        // FIXME INFO this results in the loss of the 2 missing bytes -> append at each line at the end?? or find another way to handle stdin
         .fold("".to_string(), |acc, line| acc + &line.unwrap() + "\n");
 
     // TODO possible error here?
