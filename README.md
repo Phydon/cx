@@ -1,6 +1,6 @@
 [![Tests](https://github.com/Phydon/cx/actions/workflows/rust.yml/badge.svg)](https://github.com/Phydon/cx/actions/workflows/rust.yml)
 
-# 🧮 📄 cx
+# 🧮📄 cx
 
 **C**ount **X**
 
@@ -12,13 +12,53 @@
 
 ## Examples
 
-Count words, lines, chars, bytes in file 
+### Count lines, words, chars, bytes in file 
 
-![screenshot](https://github.com/Phydon/cx/blob/master/assets/cx_file.png)
+```shell
+cat example.txt
+# lorem ipsum wasd
+```
 
-Count words in pipe 
+```shell
+cx example.txt
+# 1 3 14 18 ./example.txt
+```
 
-![screenshot](https://github.com/Phydon/cx/blob/master/assets/cx_pipe.png)
+#### Example: Count lines
+
+```shell
+cx example.txt --lines
+# 1
+```
+
+#### Example: Count words
+
+```shell
+cx example.txt --words
+# 3
+```
+
+#### Example: Count chars
+
+```shell
+cx example.txt --chars
+# 14
+```
+
+#### Example: Count bytes
+
+```shell
+cx example.txt --bytes
+# 18
+```
+
+### Count words in pipe 
+
+```shell
+echo 'Something interesting' | cx
+# 1 2 20 23
+```
+
 
 ## Usage
 
@@ -28,8 +68,9 @@ Count words in pipe
 Usage: cx [OPTIONS] [PATH] [COMMAND]
 
 Commands:
-  log, -L, --log  Show content of the log file
-  help            Print this message or the help of the given subcommand(s)
+  examples, --examples  Show examples
+  log, -L, --log        Show content of the log file
+  help                  Print this message or the help of the given subcommand(s)
 
 Arguments:
   [PATH]  The filepath to work with
@@ -39,7 +80,7 @@ Options:
   -c, --chars        Count all chars [aliases: char]
   -l, --lines        Count all lines [aliases: line]
   -S, --show-errors  Show errors (ignores errors by default) [aliases: show-error]
-  -w, --words        Count all words [default] [aliases: word]
+  -w, --words        Count all words [aliases: word]
   -h, --help         Print help (see more with '--help')
   -V, --version      Print version
 ```
@@ -50,12 +91,14 @@ Options:
 Usage: cx [OPTIONS] [PATH] [COMMAND]
 
 Commands:
-  log, -L, --log  Show content of the log file
-  help            Print this message or the help of the given subcommand(s)
+  examples, --examples  Show examples
+  log, -L, --log        Show content of the log file
+  help                  Print this message or the help of the given subcommand(s)
 
 Arguments:
   [PATH]
           The filepath to work with
+          Reads stdin if left empty
 
 Options:
   -b, --bytes
@@ -79,7 +122,7 @@ Options:
           [aliases: show-error]
 
   -w, --words
-          Count all words [default]
+          Count all words
 
           [aliases: word]
 
