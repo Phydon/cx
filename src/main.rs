@@ -7,7 +7,7 @@ use rayon::prelude::*;
 
 use std::{
     fs,
-    io::{self, BufRead},
+    io::{self, Read},
     path::{Path, PathBuf},
     process,
 };
@@ -198,22 +198,18 @@ fn count_bytes(content: &str) -> usize {
     content.par_bytes().count()
 }
 
-// FIXME incorrect counting of bytes when content is read via stdin (works when reading from file)
 fn read_stdin() -> String {
-    let mut input = io::stdin()
-        .lock()
-        .lines()
-        // Returns an iterator over the lines of this reader.
-        // The iterator returned from this function will yield instances of io::Result<String>. Each string returned will not have a newline byte (the 0xA byte) or CRLF (0xD, 0xA bytes) at the end.
-        // FIXME INFO this results in the loss of the 2 missing bytes -> append at each line at the end?? or find another way to handle stdin
-        .fold("".to_string(), |acc, line| acc + &line.unwrap() + "\n");
+    let mut buffer = Vec::new();
+    let stdin = io::stdin();
 
-    // TODO possible error here?
-    // TODO if last char is '\n' it will get removed
-    // INFO this has nothing to do with the incorrect counting of bytes (most likely not)
-    let _ = input.pop();
+    if let Err(e) = stdin.lock().read_to_end(&mut buffer) {
+        eprintln!("Error reading from stdin: {}", e);
+        process::exit(0);
+    }
 
-    input.trim().to_string()
+    let input = String::from_utf8_lossy(&buffer);
+
+    input.into_owned()
 }
 
 // build cli
@@ -238,7 +234,7 @@ fn countx() -> Command {
             "Read content from stdin or filepaths as argument.",
         ))
         // TODO update version
-        .version("1.3.0")
+        .version("1.3.1")
         .author("Leann Phydon <leann.phydon@gmail.com>")
         .arg(
             Arg::new("arg")
